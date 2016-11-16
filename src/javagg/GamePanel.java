@@ -20,21 +20,22 @@ class GamePanel extends JPanel implements ActionListener {
     private final BufferedImage background_e; // 1800x600
     private final BufferedImage background_m;
     private final BufferedImage background_h;
-    //private final BufferedImage punto;
     private final Rectangle backGame;
 
     // protected Image rz_background = new ImageIcon("/image/easyBG_m.png").getImage(); // Background Image
-    protected Image rz_punto = new ImageIcon("/image/Punto.png").getImage(); // Standing still
     Image punto = Resources.getImage("/image/Punto.png");
+    Image punto_up = Resources.getImage("/image/Punto_up.png");
+    Image punto_dn = Resources.getImage("/image/Punto_dn.png");
+    Image punto_dx = Resources.getImage("/image/Punto_dx.png");
+    Image punto_sx = Resources.getImage("/image/Punto_sx.png");
 
-    // Image obj = rz_punto; // Temporary Image reference
     Image obj = punto;
 
     final private int BKMIN_X = 0, BKMAX_X = 18000; // Min and Max of  background
-    public int bk_x = 0; // background x and y coordinates 395x535
-    public int bk_y = 535;
-    public int rz_x = 200; // character x and y coordinates
-    public int rz_y = 200;// 600x 615y
+    public int bk_x = -50; // background x and y coordinates 395x535
+    public int bk_y = 300;
+    public int rz_x = 850; // character x and y coordinates
+    public int rz_y = 405;// 600x 615y
 
     static int direction = 0; // 0=still 1=up , 2=right , 3=left , 4=down
 
@@ -56,8 +57,6 @@ class GamePanel extends JPanel implements ActionListener {
         background_m = Resources.getImage("/image/medBG_m.png");
         background_h = Resources.getImage("/image/hardBG_m.png");
 
-        punto = Resources.getImage("/image/Punto.png");
-        
         this.backGame = new Rectangle(914, 18, 182, 42);
 
         this.setSize(MainFrame.FRAME_SIZE);
@@ -67,7 +66,7 @@ class GamePanel extends JPanel implements ActionListener {
 
         ////////////////////////////////////////////////////////////////////////
         setLayout(null);
- 
+
         time = new Timer(30, this); // starting a timer and passing the actionlistener for the running animation
         time.start(); // starting
 
@@ -89,36 +88,35 @@ class GamePanel extends JPanel implements ActionListener {
                 if (kp.getKeyCode() == KeyEvent.VK_UP) {
                     direction = 4; // up
                 }
-
-                if (kp.getKeyCode() == KeyEvent.VK_SPACE) {
-                    if (jump == false & rz_y == 0) // if character standing of
-                    // platform 615
-                    {
-                        jump = true;
-                        moveableDown = true;
-                        if (direction == 2) {
-                            jumpright = true;
-                        }
-                        if (direction == 3) {
-                            jumpright = false;
-                        }
-                    }
-                }
+//                if (kp.getKeyCode() == KeyEvent.VK_SPACE) {
+//                    if (jump == false & rz_y == 0) // if character standing of
+//                    // platform 615
+//                    {
+//                        jump = true;
+//                        moveableDown = true;
+//                        if (direction == 2) {
+//                            jumpright = true;
+//                        }
+//                        if (direction == 3) {
+//                            jumpright = false;
+//                        }
+//                    }
+//                }
             } // end keyPressed
 
             @Override
-            public void keyReleased(KeyEvent kr) {
-                if (direction == 1) {
-                    obj = punto; // if direction is right ... rz_punto
+            public void keyReleased(KeyEvent kr) {  // 0=still 1=up , 2=right , 3=left , 4=down
+                if (direction == 4) { // 1
+                    obj = punto_up;
                 }
-                if (direction == 4) {
-                    obj = punto; // if direction is right ... rz_punto
+                if (direction == 3) { // 2
+                    obj = punto_sx;
                 }
-                if (direction == 2) {
-                    obj = punto; // if direction is right ... rz_punto
+                if (direction == 2) { // 3 
+                    obj = punto_dx;
                 }
-                if (direction == 3) {
-                    obj = punto; // if direction is left
+                if (direction == 1) { // 4 
+                    obj = punto_dn;
                 }
                 direction = 0;  // set still image
 
@@ -207,26 +205,14 @@ class GamePanel extends JPanel implements ActionListener {
         if (moveableLeft == true & bk_x > BKMIN_X) {
             bk_x -= 8; // decrease xcoord while moving left
 
-            if (run % 3 == 0 | run % 5 == 0) {
-                obj = punto; // set image
-            } else {
-                obj = punto;
-            }
-            run++;
         }// end if
     }// end left
 
     void right() {
         if (moveableRight == true & bk_x < BKMAX_X) {
             bk_x += 8; // increasing xcoord while moving right
-
-            if (run % 3 == 0 | run % 5 == 0) {
-                obj = punto;
-            } else {
-                obj = punto;
-            }
-            run++;
-        }// end if
+        }
+        rz_x++; // end if
     }// end right
 
     void up() {
@@ -279,15 +265,15 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) { // 0=still 1=up , 2=right , 3=left , 4=down
         if (direction == 1) {
             up();
         }
         if (direction == 2) {
-            right();
+            left();
         }
         if (direction == 3) {
-            left();
+            right();
         }
         if (direction == 4) {
             down();
