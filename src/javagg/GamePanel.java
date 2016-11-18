@@ -31,11 +31,12 @@ class GamePanel extends JPanel implements ActionListener {
 
     Image obj = punto;
 
-    final private int BKMIN_X = 0, BKMAX_X = 18000; // Min and Max of  background
-    public int bk_x = -50; // background x and y coordinates 395x535
-    public int bk_y = 300;
-    public int rz_x = 850; // character x and y coordinates
-    public int rz_y = 405;// 600x 615y
+    final private int BKMIN_X = 0, BKMAX_X = 1800; // Min and Max of  background
+    final private int BKMIN_Y = 0, BKMAX_Y = 570;
+    public int bk_x = 395; // background x and y coordinates 395x535
+    public int bk_y = 100;
+    public int rz_x = 100; // character x and y coordinates
+    public int rz_y = 300;// 600x 615y
 
     static int direction = 0; // 0=still 1=up , 2=right , 3=left , 4=down
 
@@ -43,9 +44,9 @@ class GamePanel extends JPanel implements ActionListener {
     static boolean moveableLeft = true;
     static boolean moveableDown = true;
     static boolean moveableUp = true;
-    boolean jumpright = false;
+    boolean jumpright = true;
 
-    static boolean jump = true; // For jump
+    static boolean jump = false; // For jump
     private final Timer time;
 
     static boolean pause = false;
@@ -60,7 +61,6 @@ class GamePanel extends JPanel implements ActionListener {
         this.backGame = new Rectangle(914, 18, 182, 42);
 
         this.setSize(MainFrame.FRAME_SIZE);
-
         this.addMouseListener(new GamePanel.GiocaListener());
         this.addMouseMotionListener(new GamePanel.GiocaListener());
 
@@ -77,52 +77,71 @@ class GamePanel extends JPanel implements ActionListener {
                 if (kp.getKeyCode() == KeyEvent.VK_DOWN) {
                     direction = 1;
                 }
-                if (kp.getKeyCode() == KeyEvent.VK_RIGHT
-                        & moveableRight == true) {
+                if (kp.getKeyCode() == KeyEvent.VK_RIGHT) {
                     direction = 2; // right
                 }
-                if ((kp.getKeyCode() == KeyEvent.VK_LEFT)
-                        & moveableLeft == true) {
+                if ((kp.getKeyCode() == KeyEvent.VK_LEFT)) {
                     direction = 3; // left
                 }
                 if (kp.getKeyCode() == KeyEvent.VK_UP) {
                     direction = 4; // up
                 }
-//                if (kp.getKeyCode() == KeyEvent.VK_SPACE) {
-//                    if (jump == false & rz_y == 0) // if character standing of
-//                    // platform 615
-//                    {
-//                        jump = true;
-//                        moveableDown = true;
-//                        if (direction == 2) {
-//                            jumpright = true;
-//                        }
-//                        if (direction == 3) {
-//                            jumpright = false;
-//                        }
-//                    }
-//                }
+                if (kp.getKeyCode() == KeyEvent.VK_SPACE) {
+                    if (jump == false) // if character standing of   --- & rz_y == 150
+                    // platform 615
+                    {
+                        jump = true;
+                        moveableDown = true;
+                        if (direction == 2) {
+                            jumpright = true;
+                        }
+                        if (direction == 3) {
+                            jumpright = false;
+                        }
+                    }
+                }
             } // end keyPressed
 
             @Override
             public void keyReleased(KeyEvent kr) {  // 0=still 1=up , 2=right , 3=left , 4=down
-                if (direction == 4) { // 1
-                    obj = punto_up;
-                }
-                if (direction == 3) { // 2
-                    obj = punto_sx;
+                if (direction == 1) { // 4 
+                    obj = punto_dn;
                 }
                 if (direction == 2) { // 3 
                     obj = punto_dx;
                 }
-                if (direction == 1) { // 4 
-                    obj = punto_dn;
+                if (direction == 3) { // 2
+                    obj = punto_sx;
                 }
+                if (direction == 4) { // 1
+                    obj = punto_up;
+                }
+
                 direction = 0;  // set still image
 
             } // end anonymous class and KeyListener
 
         });
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) { // 0=still 1=up , 2=right , 3=left , 4=down
+        if (direction == 1) {
+            up();
+        }
+
+        if (direction == 2) {
+            left();
+        }
+
+        if (direction == 3) {
+            right();
+        }
+
+        if (direction == 4) {
+            down();
+        }
 
     }
 
@@ -151,21 +170,18 @@ class GamePanel extends JPanel implements ActionListener {
         setBackground(g2d);
 
         // checking jump collision and enemy death
-        Jump();
-
-        if (rz_y == 0 & direction != 3 & direction != 2) // to turn razmazio
-        // in normal still --- rz_y 615
-        // state after jump
-        {
-            if (obj == punto) {
-                obj = punto;
-            }
-            if (obj == punto) {
-                obj = punto;
-            }
-        }
+          Jump();
+//        if (rz_y == 150 & direction != 3 & direction != 2) // to turn razmazio
+//        // in normal still --- rz_y 615
+//        // state after jump
+//        {
+//            obj = punto; // left
+//        } else {
+//
+//            obj = punto; // right
+//
+//        }
         g2d.drawImage(obj, rz_x, rz_y, this); // Drawing the character image
-
         repaint();
     } // end paintComponent
 
@@ -175,66 +191,56 @@ class GamePanel extends JPanel implements ActionListener {
     {
 
         if (moveableDown == true) {
-            if (jump == true & rz_y >= 450) // For upward motion during jump 450
+            if (jump == true) // For upward motion during jump 450 ----- 
             {
-                if (jumpright == true) {
-                    obj = punto;
-                } else {
-                    obj = punto;
-                }
 
                 rz_y--;
-                if (rz_y <= 450) {
+                if (rz_y <= 100) {
                     jump = false;
                 }
             }
-            if (jump == false & rz_y < 615) // For downward motion during jump rz_y 615
+            if (jump == false & rz_y < 150 ) // For downward motion during jump rz_y 615 --- 
             {
-                if (jumpright == true) {
-                    obj = punto;
-                } else {
-                    obj = punto;
-                }
+
                 rz_y++;
             }
         }
 
     }// end up
-
     void left() {
-        if (moveableLeft == true & bk_x > BKMIN_X) {
-            bk_x -= 8; // decrease xcoord while moving left
-
+        if (moveableLeft == true) {
+            if (bk_x > BKMIN_X) {
+                bk_x += 8; // decrease xcoord while moving left   
+            } else {
+                moveableLeft = false;
+            }
         }// end if
-    }// end left
+    }// end sinistra
 
     void right() {
         if (moveableRight == true & bk_x < BKMAX_X) {
-            bk_x += 8; // increasing xcoord while moving right
+            bk_x -= 8; // increasing xcoord while moving right
         }
-        rz_x++; // end if
-    }// end right
+        // end if
+    }// end destra
 
     void up() {
         if (moveableUp == true) {
-            bk_y -= 8;
+            rz_y += 8;
         }
-        rz_y++;
     }
 
     void down() {
         if (moveableDown == true) {
-            bk_y += 8;
+            rz_y -= 8;
         }
-        rz_y--;
+
     }
 
     // ////////////////////////////////////// SETTER FUNCTIONS
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     void setBackground(Graphics g2d) {
-        g2d.drawImage(background_e, bk_x, 0, null); // Drawing background ..... rz_background
-        // relative to
-        // character
+        g2d.drawImage(background_e, 150 - bk_x, 0, null);
     }// end setBackground
 
 // end class {
@@ -262,22 +268,6 @@ class GamePanel extends JPanel implements ActionListener {
             }
         }
 
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) { // 0=still 1=up , 2=right , 3=left , 4=down
-        if (direction == 1) {
-            up();
-        }
-        if (direction == 2) {
-            left();
-        }
-        if (direction == 3) {
-            right();
-        }
-        if (direction == 4) {
-            down();
-        }
     }
 
 }
