@@ -9,11 +9,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javagg.util.Resources;
-import java.awt.*;  // inizio 
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.event.*;
-import java.util.*; //fine
+import java.util.*;
 
 class GamePanel extends JPanel implements ActionListener {
 
@@ -22,7 +22,6 @@ class GamePanel extends JPanel implements ActionListener {
     private final BufferedImage background_h;
     private final Rectangle backGame;
 
-    // protected Image rz_background = new ImageIcon("/image/easyBG_m.png").getImage(); // Background Image
     Image punto = Resources.getImage("/image/Punto.png");
     Image punto_up = Resources.getImage("/image/Punto_up.png");
     Image punto_dn = Resources.getImage("/image/Punto_dn.png");
@@ -31,22 +30,31 @@ class GamePanel extends JPanel implements ActionListener {
 
     Image obj = punto;
 
-    final private int BKMIN_X = 0, BKMAX_X = 1800; // Min and Max of  background
+    final private int BKMIN_X = 0, BKMAX_X = 10000; // Min and Max of  background
     final private int BKMIN_Y = 0, BKMAX_Y = 570;
-    public int bk_x = 395; // background x and y coordinates 395x535
-    public int bk_y = 100;
-    public int rz_x = 100; // character x and y coordinates
-    public int rz_y = 300;// 600x 615y
+    public int bk_x = 350; // background x and y coordinates 395x535
+    public int bk_y = 476;
+    public int rz_x = 350;
+    public int rz_y = 482;// 600x 615y
 
-    static int direction = 0; // 0=still 1=up , 2=right , 3=left , 4=down
+//    static final int height = 10;
+//    static final int width = 10;
+//    public float vDelta;
+//    public float rbDelta;
+//    public float rbDegDelta;
+//    public float gDelta;
+//    public boolean bounce = false;
+//    public int yPos;
 
-    static boolean moveableRight = true; // variable for collision detection
+    static int direction = 0;
+
+    static boolean moveableRight = true;
     static boolean moveableLeft = true;
-    static boolean moveableDown = true;
-    static boolean moveableUp = true;
+    static boolean moveableDown = false;
+    static boolean moveableUp = false;
     boolean jumpright = true;
 
-    static boolean jump = false; // For jump
+    static boolean jump = false;
     private final Timer time;
 
     static boolean pause = false;
@@ -54,42 +62,44 @@ class GamePanel extends JPanel implements ActionListener {
 
     public GamePanel() {
 
-        background_e = Resources.getImage("/image/easyBG_m.png");
+        background_e = Resources.getImage("/image/BBIG.jpg");
         background_m = Resources.getImage("/image/medBG_m.png");
         background_h = Resources.getImage("/image/hardBG_m.png");
 
         this.backGame = new Rectangle(914, 18, 182, 42);
 
-        this.setSize(MainFrame.FRAME_SIZE);
+        //this.setSize(MainFrame.FRAME_SIZE);
         this.addMouseListener(new GamePanel.GiocaListener());
         this.addMouseMotionListener(new GamePanel.GiocaListener());
 
-        ////////////////////////////////////////////////////////////////////////
+//        yPos = getPreferredSize().height - height ;
+//        vDelta = 0;
+//        gDelta = 0.25f;
+//        rbDegDelta = 2.25f;
+        
         setLayout(null);
 
-        time = new Timer(30, this); // starting a timer and passing the actionlistener for the running animation
-        time.start(); // starting
+        time = new Timer(15, this);
+        time.start();
 
-        addKeyListener(new KeyAdapter() // Movement of razmazio
-        {
+        addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent kp) {
-                if (kp.getKeyCode() == KeyEvent.VK_DOWN) {
-                    direction = 1;
-                }
+
+//                if (kp.getKeyCode() == KeyEvent.VK_DOWN) {
+//                    direction = 1;
+//                }
                 if (kp.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    direction = 2; // right
+                    direction = 2;
                 }
                 if ((kp.getKeyCode() == KeyEvent.VK_LEFT)) {
-                    direction = 3; // left
+                    direction = 3;
                 }
-                if (kp.getKeyCode() == KeyEvent.VK_UP) {
-                    direction = 4; // up
-                }
-                if (kp.getKeyCode() == KeyEvent.VK_SPACE) {
-                    if (jump == false) // if character standing of   --- & rz_y == 150
-                    // platform 615
-                    {
+//                if (kp.getKeyCode() == KeyEvent.VK_UP) {
+//                    direction = 4;
+//                }
+                if (kp.getKeyCode() == KeyEvent.VK_SPACE & rz_y <= 482) {
+                    if (jump == false) {
                         jump = true;
                         moveableDown = true;
                         if (direction == 2) {
@@ -100,49 +110,43 @@ class GamePanel extends JPanel implements ActionListener {
                         }
                     }
                 }
-            } // end keyPressed
+            }
 
-            @Override
-            public void keyReleased(KeyEvent kr) {  // 0=still 1=up , 2=right , 3=left , 4=down
-                if (direction == 1) { // 4 
-                    obj = punto_dn;
-                }
-                if (direction == 2) { // 3 
-                    obj = punto_dx;
-                }
-                if (direction == 3) { // 2
-                    obj = punto_sx;
-                }
-                if (direction == 4) { // 1
-                    obj = punto_up;
-                }
-
-                direction = 0;  // set still image
-
-            } // end anonymous class and KeyListener
-
+//            @Override
+//            public void keyReleased(KeyEvent kr) {  // 0=still 1=up , 2=right , 3=left , 4=down
+//                if (direction == 1) {
+//                    obj = punto_dn;
+//                }
+//                if (direction == 2) {
+//                    obj = punto_dx;
+//                }
+//                if (direction == 3) {
+//                    obj = punto_sx;
+//                }
+//                if (direction == 4) {
+//                    obj = punto_up;
+//                }
+//
+//            }
         });
 
     }
 
     @Override
     public void actionPerformed(ActionEvent e) { // 0=still 1=up , 2=right , 3=left , 4=down
-        if (direction == 1) {
-            up();
-        }
-
+//        if (direction == 1) {
+//            up();
+//        }
         if (direction == 2) {
-            left();
-        }
-
-        if (direction == 3) {
             right();
         }
-
-        if (direction == 4) {
-            down();
+        if (direction == 3) {
+            left();
         }
-
+//        if (direction == 4) {
+//            down();
+//        }
+        direction = 0;
     }
 
     /*    @Override
@@ -163,88 +167,67 @@ class GamePanel extends JPanel implements ActionListener {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        requestFocus(); // get focus after changing card
+        requestFocus();
         setFocusable(true);
 
-        // setting background points and cash in the game
         setBackground(g2d);
+        // collisioni 
 
-        // checking jump collision and enemy death
-          Jump();
-//        if (rz_y == 150 & direction != 3 & direction != 2) // to turn razmazio
-//        // in normal still --- rz_y 615
-//        // state after jump
-//        {
-//            obj = punto; // left
-//        } else {
-//
-//            obj = punto; // right
-//
-//        }
-        g2d.drawImage(obj, rz_x, rz_y, this); // Drawing the character image
+        Jump();
+
+        g2d.drawImage(obj, rz_x, rz_y, this);
         repaint();
-    } // end paintComponent
+    }
 
-    // /////////////////////////////// DIRECTION CONDITIONS
-    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     void Jump() // Jump mechanism
     {
 
         if (moveableDown == true) {
-            if (jump == true) // For upward motion during jump 450 ----- 
+            if (jump == true & rz_y >= 357) // max altezza jump
             {
 
-                rz_y--;
-                if (rz_y <= 100) {
+                rz_y -= 8;
+                if (rz_y <= 357) {
                     jump = false;
                 }
             }
-            if (jump == false & rz_y < 150 ) // For downward motion during jump rz_y 615 --- 
+            if (jump == false & rz_y < 482) // min altezza jump
             {
-
-                rz_y++;
+                rz_y += 8;
             }
         }
 
     }// end up
+
     void left() {
-        if (moveableLeft == true) {
-            if (bk_x > BKMIN_X) {
-                bk_x += 8; // decrease xcoord while moving left   
-            } else {
-                moveableLeft = false;
-            }
+        if (moveableLeft == true & bk_x > BKMIN_X + 250) {  // 250
+            bk_x -= 40; // decrease xcoord while moving left 8
+
         }// end if
-    }// end sinistra
+    }
 
     void right() {
-        if (moveableRight == true & bk_x < BKMAX_X) {
-            bk_x -= 8; // increasing xcoord while moving right
-        }
-        // end if
-    }// end destra
+        if (moveableRight == true & bk_x < BKMAX_X - 900) { //900
+            bk_x += 40; // increasing xcoord while moving right 8
 
-    void up() {
-        if (moveableUp == true) {
-            rz_y += 8;
-        }
+        }// end if
     }
 
-    void down() {
-        if (moveableDown == true) {
-            rz_y -= 8;
-        }
-
-    }
-
-    // ////////////////////////////////////// SETTER FUNCTIONS
-    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//    void up() {
+//        if (moveableUp == true) {
+//            rz_y += 8;
+//        }
+//    }
+//
+//    void down() {
+//        if (moveableDown == true) {
+//            rz_y -= 8;
+//        }
+//    }
     void setBackground(Graphics g2d) {
         g2d.drawImage(background_e, 150 - bk_x, 0, null);
-    }// end setBackground
+    }
 
-// end class {
-///////////////////////////////////////////////////////////////////////////
     public class GiocaListener extends MouseAdapter {
 
         @Override
