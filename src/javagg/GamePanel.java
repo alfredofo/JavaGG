@@ -43,13 +43,16 @@ class GamePanel extends JPanel implements ActionListener {
     public float rbDelta;
     public float rbDegDelta;
     public float gDelta;
+
     public boolean bounce = false;
+
     public int yPos;
+    public int xPos;
 
     static int direction = 0;
 
-    static boolean moveableRight = true;
-    static boolean moveableLeft = true;
+    static boolean moveableRight = false;
+    static boolean moveableLeft = false;
     static boolean moveableDown = false;
     static boolean moveableUp = false;
     boolean jumpright = true;
@@ -85,37 +88,32 @@ class GamePanel extends JPanel implements ActionListener {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent kp) {
-
                 if (kp.getKeyCode() == KeyEvent.VK_RIGHT) {
                     direction = 2;
+                    moveableRight = true;
                 }
                 if ((kp.getKeyCode() == KeyEvent.VK_LEFT)) {
                     direction = 3;
+                    moveableLeft = true;
                 }
-
-                if (kp.getKeyCode() == KeyEvent.VK_SPACE & rz_y <= 482) {
-
+                if (kp.getKeyCode() == KeyEvent.VK_SPACE) {
                     vDelta = -8;
                     rbDelta = vDelta;
                     bounce = true;
-
                 }
             }
-
-        });
-
+        }
+        );
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         if (direction == 2) {
             right();
         }
         if (direction == 3) {
             left();
         }
-
         direction = 0;
     }
 
@@ -133,61 +131,89 @@ class GamePanel extends JPanel implements ActionListener {
         Jump();
 
         g2d.drawImage(obj, rz_x, yPos, this);
+        checkStatus();
+        isGrounded();
         repaint();
     }
 
     void Jump() // Jump mechanism
     {
-        int height = getHeight();
+
+//        int height = getHeight();
         // No point if we've not been sized...
-        if (height > 0) {
-            // Are we bouncing...
-            if (bounce) {
-                // Add the vDelta to the yPos
-                // vDelta may be postive or negative, allowing
-                // for both up and down movement...
-                yPos += vDelta;
-                // Add the gravity to the vDelta, this will slow down
-                // the upward movement and speed up the downward movement...
-                // You may wish to place a max speed to this
-                vDelta += gDelta;
-                // If the sprite is not on the ground...
-                if (yPos >= rz_y) { // + GamePanel.height >= height
-                    // Seat the sprite on the ground
-                    yPos = rz_y; // height - GamePanel.height
-                    // If the re-bound delta is 0 or more then we've stopped
-                    // bouncing...
-                    if (rbDelta >= 0) {
-                        // Stop bouncing...
-                        bounce = false;
-                    } else {
-                        // Add the re-bound degregation delta to the re-bound delta
-                        rbDelta += rbDegDelta;
-                        // Set the vDelta...
-                        vDelta = rbDelta;
-                    }
+        //  if (yPos > 100) {   // height > 0
+        // Are we bouncing...
+        if (bounce) {
+            // Add the vDelta to the yPos
+            // vDelta may be postive or negative, allowing
+            // for both up and down movement...
+            yPos += vDelta;                                                 // Add the vDelta to the yPos
+            // vDelta may be postive or negative, allowing
+            // for both up and down movement...
+            // Add the gravity to the vDelta, this will slow down
+            // the upward movement and speed up the downward movement...
+            // You may wish to place a max speed to this
+            vDelta += gDelta;
+            // If the sprite is not on the ground...
+            if (yPos >= rz_y) {                                             // + GamePanel.height >= height
+                // Seat the sprite on the ground
+                yPos = rz_y;                                                // height - GamePanel.height
+                // If the re-bound delta is 0 or more then we've stopped
+                // bouncing...
+                if (rbDelta >= 0) { // 
+                    // Stop bouncing...
+                    bounce = false;
+                } else {
+                    // Add the re-bound degregation delta to the re-bound delta
+                    rbDelta += rbDegDelta;
+                    // Set the vDelta...
+                    vDelta = rbDelta;
                 }
             }
         }
 
+        // }
     }
 
-    void left() {
-        if (moveableLeft == true & bk_x > BKMIN_X + 250) {  // 250
-            bk_x -= 40;
-
-        }// end if
+    void left() { // 3
+        if (bk_x > BKMIN_X + 250) {  // 250 ... moveableLeft == true && // && isGrounded()==true
+            bk_x -= 15;
+            moveableLeft = false;
+        }
     }
 
-    void right() {
-        if (moveableRight == true & bk_x < BKMAX_X - 900) { //900
-            bk_x += 40;
+    void right() { // 2
+        if (bk_x < BKMAX_X - 900) { //900 ... moveableRight == true && //  && isGrounded()==true
+            bk_x += 15;
+            moveableRight = false;
+        }
+    }
 
+    public void checkStatus() {
+        int ck;
+        if (moveableLeft == true) {
+            ck = 3;
+            System.out.println(ck);
+        }
+        if (moveableRight == true) {
+            ck = 2;
+            System.out.println(ck);
+        }
+    }
+
+    boolean isGrounded() {
+        if (yPos == rz_y) {
+            System.out.println("isGrounded");
+            return true;
+        } else {
+            System.out.println("is!=Grounded");
+            return false;
         }
     }
 
     void setBackground(Graphics g2d) {
-        g2d.drawImage(background_e, 200 - bk_x, 0, null);
+        g2d.drawImage(background_e, 200 - bk_x, 0, null); // bk_x
+
     }
 
     public class GiocaListener extends MouseAdapter {
