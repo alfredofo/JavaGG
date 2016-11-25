@@ -23,10 +23,10 @@ class GamePanel extends JPanel implements ActionListener {
     private final Rectangle backGame;
 
     Image punto = Resources.getImage("/image/Punto.png");
-    Image punto_up = Resources.getImage("/image/Punto_up.png");
-    Image punto_dn = Resources.getImage("/image/Punto_dn.png");
-    Image punto_dx = Resources.getImage("/image/Punto_dx.png");
-    Image punto_sx = Resources.getImage("/image/Punto_sx.png");
+    Image punto2up = Resources.getImage("/image/Punto_up.png");
+    Image punto2dn = Resources.getImage("/image/Punto_dn.png");
+    Image punto2dx = Resources.getImage("/image/Punto_dx.png");
+    Image punto2sx = Resources.getImage("/image/Punto_sx.png");
 
     Image obj = punto;
 
@@ -35,7 +35,7 @@ class GamePanel extends JPanel implements ActionListener {
     public int bk_x = 350; // background x and y coordinates 395x535
     public int bk_y = 476;
     public int rz_x = 350;
-    public int rz_y = 482;// 600x 615y
+    public int rz_y = 480;// 600x 615y
 
     static final int height = 10;
     static final int width = 10;
@@ -61,7 +61,6 @@ class GamePanel extends JPanel implements ActionListener {
     private final Timer time;
 
     static boolean pause = false;
-    int run = 0;
 
     public GamePanel() {
 
@@ -82,7 +81,7 @@ class GamePanel extends JPanel implements ActionListener {
 
         setLayout(null);
 
-        time = new Timer(15, this);
+        time = new Timer(30, this);
         time.start();
 
         addKeyListener(new KeyAdapter() {
@@ -100,7 +99,9 @@ class GamePanel extends JPanel implements ActionListener {
                     vDelta = -8;
                     rbDelta = vDelta;
                     bounce = true;
+
                 }
+
             }
         }
         );
@@ -114,7 +115,6 @@ class GamePanel extends JPanel implements ActionListener {
         if (direction == 3) {
             left();
         }
-        direction = 0;
     }
 
     @Override
@@ -131,60 +131,42 @@ class GamePanel extends JPanel implements ActionListener {
         Jump();
 
         g2d.drawImage(obj, rz_x, yPos, this);
-        checkStatus();
-        isGrounded();
+
+        // checkStatus();
+        // isGrounded();
         repaint();
     }
 
-    void Jump() // Jump mechanism
-    {
-
-//        int height = getHeight();
-        // No point if we've not been sized...
-        //  if (yPos > 100) {   // height > 0
-        // Are we bouncing...
+    void Jump() {
         if (bounce) {
-            // Add the vDelta to the yPos
-            // vDelta may be postive or negative, allowing
-            // for both up and down movement...
-            yPos += vDelta;                                                 // Add the vDelta to the yPos
-            // vDelta may be postive or negative, allowing
-            // for both up and down movement...
-            // Add the gravity to the vDelta, this will slow down
-            // the upward movement and speed up the downward movement...
-            // You may wish to place a max speed to this
+            yPos += vDelta;                                                     // Add the vDelta to the yPos
             vDelta += gDelta;
-            // If the sprite is not on the ground...
-            if (yPos >= rz_y) {                                             // + GamePanel.height >= height
-                // Seat the sprite on the ground
-                yPos = rz_y;                                                // height - GamePanel.height
-                // If the re-bound delta is 0 or more then we've stopped
-                // bouncing...
-                if (rbDelta >= 0) { // 
-                    // Stop bouncing...
+            if (yPos >= rz_y) {                      // + GamePanel.height >= height   
+                yPos = rz_y;                                // height - GamePanel.height
+                if (rbDelta >= 0) {
                     bounce = false;
                 } else {
-                    // Add the re-bound degregation delta to the re-bound delta
                     rbDelta += rbDegDelta;
-                    // Set the vDelta...
                     vDelta = rbDelta;
                 }
             }
         }
-
-        // }
+        if (yPos <= BKMIN_Y) {
+            vDelta = +8;
+            rbDelta = vDelta;
+        }
     }
 
     void left() { // 3
         if (bk_x > BKMIN_X + 250) {  // 250 ... moveableLeft == true && // && isGrounded()==true
-            bk_x -= 15;
+            bk_x -= 26;
             moveableLeft = false;
         }
     }
 
     void right() { // 2
         if (bk_x < BKMAX_X - 900) { //900 ... moveableRight == true && //  && isGrounded()==true
-            bk_x += 15;
+            bk_x += 26;
             moveableRight = false;
         }
     }
@@ -212,7 +194,7 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
     void setBackground(Graphics g2d) {
-        g2d.drawImage(background_e, 200 - bk_x, 0, null); // bk_x
+        g2d.drawImage(background_e, 200 - bk_x, 0, null);
 
     }
 
