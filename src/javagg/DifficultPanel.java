@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import javagg.util.swaPnl;
 
 public class DifficultPanel extends JPanel {
 
@@ -57,7 +56,6 @@ public class DifficultPanel extends JPanel {
                 //livello facile
                 MainFrame.difficultPanel.setVisible(false);
                 MainFrame.gamePanel.setVisible(true);
-
             } else if (mediumRect.contains(p)) {
                 //livello medio
             } else if (hardRect.contains(p)) {
@@ -66,7 +64,6 @@ public class DifficultPanel extends JPanel {
                 MainFrame.difficultPanel.setVisible(false);
                 MainFrame.mainPanel.setVisible(true);
 
-//swaPnl swap = new swaPnl(MainFrame.difficultPanel,MainFrame.mainPanel);
             } else {
 
             }

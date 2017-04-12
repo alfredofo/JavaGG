@@ -11,6 +11,7 @@ public class MainFrame extends JFrame {
     public static MainPanel mainPanel;
     public static DifficultPanel difficultPanel;
     public static GamePanel gamePanel;
+    public static EndPanel endPanel;
 
     public MainFrame() {
         this.setSize(FRAME_SIZE);
@@ -25,9 +26,12 @@ public class MainFrame extends JFrame {
         difficultPanel.setVisible(false);
         gamePanel = new GamePanel();
         gamePanel.setVisible(false);
+        endPanel = new EndPanel();
+        endPanel.setVisible(false);
 
         this.getContentPane().add(mainPanel);
         this.getContentPane().add(difficultPanel);
+        this.getContentPane().add(endPanel);
         this.getContentPane().add(gamePanel);
         
         this.setVisible(true);
